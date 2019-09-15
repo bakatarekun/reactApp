@@ -12,7 +12,7 @@ app.get('/api/customers', (req, res) => {
   res.json(customers);
 });
 
-const port = 5000 || process.env.PORT;
+const port =  process.env.POR ||5000;
 app.set('port', (process.env.PORT || 5000));
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
