@@ -16,12 +16,12 @@ if(process.env.NODE_ENV === "production")
 {
   app.use(express.static('client/build'));
 
- app.get('*', (req, res) => {
+  app.get('*', (req, res) => {
 
   rest.sendFile(path.resolove(__dirname, "client", "build", "index.html"))
  })
 }
-const port =  process.env.POR || 5000;
+const port =  process.env.PORT || 5000;
 
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
