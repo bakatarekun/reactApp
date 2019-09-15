@@ -59,13 +59,13 @@ class App extends Component {
             <div>
             
               Add an Item...
-      
+            
               <input type="text"
               placeholder="Type item here..."
               value={this.state.newItem}
               onChange={e => this.updateInput("newItem", e.target.value)}/>
               <button  onClick={() => this.addItem()}>Add</button>
-              <br/>
+              <br/>  <br/>
 
             <ul>
               {this.state.list.map(item =>{
