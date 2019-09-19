@@ -10,7 +10,8 @@ class App extends Component {
 
     this.state={
       newItem:"",
-      list:[]
+      list:[],
+      number:0
     }
   }
 
@@ -25,20 +26,22 @@ class App extends Component {
   addItem(){
     //create item with unique id
     const newItem={
-      id: 1 + Math.random(),
+      // id: 1 + Math.random(),
+      id: this.state.number +1,
       value: this.state.newItem.slice()
     };
 
     //copy of current list of items
     const list = [...this.state.list];
-
+   
     //add new item to list
     list.push(newItem);
 
     //update state with new list and reset newItem input
     this.setState({
       list,
-      newItem:""
+      newItem:"",
+      number: this.state.number +1
     })
   }
 
@@ -71,7 +74,7 @@ class App extends Component {
               {this.state.list.map(item =>{
                  return(
                    <li  key={item.id} >
-                   {item.value} 
+                   {item.id} {item.value} 
                    <button class="btnClass" onClick={() => this.deleteItem(item.id)}>
                     X </button>
                    </li>
