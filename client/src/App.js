@@ -25,7 +25,7 @@ class App extends Component {
   addItem(){
     //create item with unique id
     const newItem={
-      id: 1+ Math.random(),
+      id: 1 + Math.random(),
       value: this.state.newItem.slice()
     };
 
