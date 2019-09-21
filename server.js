@@ -44,6 +44,41 @@ app.post('/comment', (req, res) => {
   });
 });
 
+app.post('/reset-vote', (req, res) => {
+  const { id, vote } = req.body;
+  db.findOne({ _id: id }, function (err, doc) {
+    if (err) {
+      return res.status(500).send(err);
+    }
+
+    db.update({ _id: id }, { $set: { votes: 0} }, { returnUpdatedDocs: true }, (err, num, updatedDoc) => {
+      if (err) return res.status(500).send(err);
+
+      pusher.trigger('comments', 'reset-vote', {
+        doc: updatedDoc,
+      });
+    });
+  });
+});
+
+app.post('/remove-comment', (req, res) => {
+  const { text,id } = req.body;
+  db.findOne({ _id: id }, function (err, doc) {
+    if (err) {
+      return res.status(500).send(err);
+    }
+
+    db.remove({ _id: id }, {}, (err,updatedDoc) => {
+      if (err) return res.status(500).send(err);
+
+      pusher.trigger('comments', 'remove-comment', {
+        doc: updatedDoc,
+      });
+    });
+  });
+});
+
+
 app.post('/vote', (req, res) => {
   const { id, vote } = req.body;
   db.findOne({ _id: id }, function (err, doc) {
@@ -60,6 +95,7 @@ app.post('/vote', (req, res) => {
     });
   });
 });
+
 //comments
 /*app.set('port', process.env.PORT || 5000);
 const server = app.listen(app.get('port'), () => {

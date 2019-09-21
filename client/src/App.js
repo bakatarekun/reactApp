@@ -53,6 +53,7 @@ class App extends Component {
 
     this.setState({list: updatedList});
   }
+  
   render(){
     return (
           <div className="App">

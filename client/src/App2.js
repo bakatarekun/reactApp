@@ -15,6 +15,7 @@ class App2 extends Component {
     this.setState({
       [name]: value,
     });
+   // alert(value);
   };
 
   postComment = event => {
@@ -48,6 +49,28 @@ class App2 extends Component {
     });
   };
 
+  resetVote = (id) => {
+    axios.post('http://localhost:5000/reset-vote', {
+      // axios.post('https://realtime-comments.herokuapp.com/', {
+      id
+    });
+  };
+
+
+  delete(text,id){
+    //copy of current list of items
+   const list = [...this.state.comments];
+    //filter out item being deleted
+    const updatedList = list.filter(comment => comment.text !== text);
+
+    this.setState({comments: updatedList});
+
+    axios.post('http://localhost:5000/remove-comment', {
+     
+      id
+    });
+  };
+
   componentDidMount() {
     const pusher = new Pusher('45130ba5bffaf472ebd5', {
       cluster: 'us2',
@@ -65,6 +88,7 @@ class App2 extends Component {
       .catch(error => console.log(error));
 
     const channel = pusher.subscribe('comments');
+
     channel.bind('new-comment', data => {
       this.setState(prevState => {
         const { comments } = prevState;
@@ -90,6 +114,37 @@ class App2 extends Component {
         comments,
       });
     });
+
+    channel.bind('reset-vote', data => {
+      let { comments } = this.state;
+      comments = comments.map(e => {
+        if (e._id === data.doc._id) {
+          return data.doc;
+        }
+
+        return e;
+      });
+
+      this.setState({
+        comments,
+      });
+    });
+
+    channel.bind('remove-comment', data => {
+      let { comments } = this.state;
+      comments = comments.map(e => {
+        if (e._id === data.doc._id) {
+          return data.doc;
+        }
+
+        return e;
+      });
+
+      this.setState({
+        comments,
+      });
+    });
+
   }
 
   render() {
@@ -107,6 +162,10 @@ class App2 extends Component {
             <button className="downvote" onClick={() => this.vote(e._id, -1)}>
               Downvote
             </button>
+            <button className="btnClass" onClick={() => this.resetVote(e._id)}>
+                    Reset</button>
+                    <button className="btnClass" onClick={() => this.delete(e.text,e._id)}>
+                    Delete</button>
           </div>
           <div className="votes">Votes: {e.votes}</div>
         </div>
@@ -116,7 +175,7 @@ class App2 extends Component {
     return (
       <div className="App">
         <article className="post">
-          <h1>Interesting Video</h1>
+          <h1>Post Your Ideas Here</h1>
           {/* <iframe
             title="video"
             width="560"
@@ -126,7 +185,7 @@ class App2 extends Component {
             allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
           /> */}
-          <p>Leave a comment if you enjoyed the video above</p>
+          <p></p>
         </article>
         <section className="comments-form">
           <form onSubmit={this.postComment}>
