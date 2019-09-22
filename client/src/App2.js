@@ -57,21 +57,18 @@ class App2 extends Component {
   };
 
 
-  delete(text,id){
-    //copy of current list of items
-   const list = [...this.state.comments];
-    //filter out item being deleted
-    const updatedList = list.filter(comment => comment.text !== text);
-
-    this.setState({comments: updatedList});
-
-    axios.post('http://localhost:5000/remove-comment', {
+  delete(id,text){
+    
+    axios.post('http://localhost:5000/remove-comment', { 
+      id,text
+    }).then(() => {
+      //this.setState({comments: updatedList});
      
-      id
-    });
+    }).catch(error => console.log(error));;
   };
 
   componentDidMount() {
+
     const pusher = new Pusher('45130ba5bffaf472ebd5', {
       cluster: 'us2',
       encrypted: true,
@@ -131,18 +128,29 @@ class App2 extends Component {
     });
 
     channel.bind('remove-comment', data => {
-      let { comments } = this.state;
-      comments = comments.map(e => {
+     let { comments } = this.state;
+       //copy of current list of items
+       const list = [...this.state.comments];
+       //filter out item being deleted
+       const updatedList = list.filter(comment => comment.text !== data.text);
+       
+    //debugger;
+     /* comments = comments.map(e => {
+      // alert(data);
         if (e._id === data.doc._id) {
           return data.doc;
         }
 
         return e;
+      });*/
+     
+  
+      this.setState({
+        comments:updatedList
+ 
       });
 
-      this.setState({
-        comments,
-      });
+    
     });
 
   }
@@ -164,7 +172,7 @@ class App2 extends Component {
             </button>
             <button className="btnClass" onClick={() => this.resetVote(e._id)}>
                     Reset</button>
-                    <button className="btnClass" onClick={() => this.delete(e.text,e._id)}>
+                    <button className="btnClass" onClick={() => this.delete(e._id,e.text)}>
                     Delete</button>
           </div>
           <div className="votes">Votes: {e.votes}</div>

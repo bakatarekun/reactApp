@@ -63,19 +63,18 @@ app.post('/reset-vote', (req, res) => {
 
 app.post('/remove-comment', (req, res) => {
   const { text,id } = req.body;
-  db.findOne({ _id: id }, function (err, doc) {
-    if (err) {
-      return res.status(500).send(err);
-    }
 
-    db.remove({ _id: id }, {}, (err,updatedDoc) => {
-      if (err) return res.status(500).send(err);
+ 
+  db.remove({ _id: id }, {returnUpdatedDocs: true }, (err,updatedDoc) => {
+    if (err) return res.status(500).send(err);
 
-      pusher.trigger('comments', 'remove-comment', {
-        doc: updatedDoc,
-      });
+    pusher.trigger('comments', 'remove-comment', {
+      doc: updatedDoc,
+      text:text,
+      id:id
     });
   });
+  res.status(200).send('OK');
 });
 
 
